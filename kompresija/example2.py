@@ -1,10 +1,10 @@
-from decimal import getcontext, Decimal
-import struct
-import decoder
+import pyae
+from decimal import getcontext
 
-getcontext().prec = 200000
+# Example for encoding a simple text message using the PyAE module.
 
-slovar = {
+# Create the frequency table.
+frequency_table = {
   " ": 0.01,
   "!": 0.01,
   "\"": 0.01,
@@ -102,45 +102,31 @@ slovar = {
   "~": 0.01,
   "\n": 0.01
 }
+# Create an instance of the ArithmeticEncoding class.
+AE = pyae.ArithmeticEncoding(frequency_table, 
+                             save_stages=True)
 
+# Default precision is 28. Change it to do arithmetic operations with larger/smaller numbers.
+getcontext().prec = 200000
 
 x = open("input.txt", "r").readlines()
-interval = [0, 1]
-
-def rez(interval):
-    temp=[]
-    temp.append(interval[-3])
-    temp.append(interval[-2])
-    interval.clear()
-    interval.append(temp[0])
-    interval.append(temp[-1])
-
-    return interval
-
-
+original_msg = ""
 
 for i in x:
-    for l in i:
-        for j in slovar:
-            interval.insert(-1, Decimal(interval[-1]-interval[0])*Decimal(slovar[j])+interval[-2])
-
-            if j == l:
-                break
-        interval = rez(interval)
+    original_msg += i
 
 
-counter = 0
-for i in x:
-     counter += len(i)
+# Encode the message
+encoded_msg, encoder , interval_min_value, interval_max_value = AE.encode(msg=original_msg, 
+                                                                          probability_table=AE.probability_table)
 
+#print(encoded_msg)
 
-rezultat = decoder.decode(interval[0], slovar, counter)
+# Decode the message
+decoded_msg, decoder = AE.decode(encoded_msg=encoded_msg, 
+                                 msg_length=len(original_msg),
+                                 probability_table=AE.probability_table)
 
-#print(interval[0])
-
+decoded_msg = "".join(decoded_msg)
 with open("output.txt", "w") as l:
-        l.write(rezultat)
-
-bytes = struct.pack("d", interval[0])
-with open("binary.bin", "wb") as f:
-    f.write(bytes)
+        l.write(decoded_msg)

@@ -20,7 +20,7 @@ def decode(message:float, slovar:dict, dol:int):
     interval = [0, 1]
     
 
-    for i in range(dol):
+    for i in range(dol-1):
         lower = Decimal(interval[0])
         multiplier = (interval[1]-interval[0])
         interval.clear()
@@ -29,4 +29,8 @@ def decode(message:float, slovar:dict, dol:int):
         interval.append(Decimal(slovar.index(a)+1)*Decimal(0.01)*multiplier+lower)
         rezultat += a
 
-    return rezultat
+    lower = Decimal(interval[0])
+    multiplier = (interval[1]-interval[0])    
+    a =  slovar[int((Decimal(message)-lower)//(Decimal(0.01)*multiplier))+1]
+
+    return rezultat+a

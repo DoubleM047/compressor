@@ -10,11 +10,13 @@ slovar = [' ', '!', '\n', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',',
 
 x = open("input.txt", "r").readlines()
 
+str1 = ""
+
 counter = 0
 for i in x:
+     str1 +=i
      counter += len(i)
 
-print(counter)
 getcontext().prec = 2*counter
 
 interval = [0, 1]
@@ -37,30 +39,6 @@ for i in x:
         interval.append(Decimal(slovar.index(l))*Decimal(0.01)*multiplier+b)
         interval.append(Decimal(slovar.index(l)+1)*Decimal(0.01)*multiplier+b)
 
-def decimal_to_binary_float(dec):
-    integer_part = int(dec)
-    fractional_part = dec - integer_part
-
-    binary_integer = bin(integer_part).lstrip('0b') or '0'
-    
-
-    binary_fraction = []
-    while fractional_part != 0 and len(binary_fraction) < 16: 
-        fractional_part *= 2
-        bit = int(fractional_part)
-        binary_fraction.append(str(bit))
-        fractional_part -= bit
-    
-    return f'{binary_integer}.' + ''.join(binary_fraction) if binary_fraction else binary_integer
-
-dec_float = decimal.Decimal('42.625')
-
-
-binary_representation = decimal_to_binary_float(dec_float)
-
-with open("output.bin", "wb") as binary_file:
-
-    binary_file.write(binary_representation.encode('utf-8'))
 really_long_float = interval[0]
 podpis, stevke, eksponent = really_long_float.as_tuple()
 mantisa = int(''.join(map(str, stevke)))
@@ -83,8 +61,15 @@ really_long_float_from_file = Decimal(mantisa)
 
 rezultat = decoderV2.decode(really_long_float_from_file, slovar, counter)
 
-rezultat = decoderV2.decode(interval[0], slovar, counter)
 
 with open("output.txt", "w") as l:
         l.write(rezultat)
 
+y = open("output.txt", "r").readlines()
+
+str2 = ""
+
+for i in y:
+     str2 +=i
+
+print(str1==str2)
